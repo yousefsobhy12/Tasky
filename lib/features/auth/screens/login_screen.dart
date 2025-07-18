@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tasky/core/constants/validator.dart';
+import 'package:tasky/data/firebase/firebase_auth.dart';
 import 'package:tasky/features/auth/screens/register_screen.dart';
 import 'package:tasky/features/auth/widgets/bottom_part.dart';
 import 'package:tasky/features/auth/widgets/custom_button.dart';
@@ -10,6 +12,7 @@ class LoginScreen extends StatelessWidget {
   static const String pageRoute = 'LoginScreen';
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  var formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,38 +20,57 @@ class LoginScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: MediaQuery.sizeOf(context).height * 0.12),
-                Text(
-                  'Login',
-                  style: TextStyle(
-                    color: Color(0xff24252C),
-                    fontSize: 32,
-                    fontFamily: 'lato',
-                    fontWeight: FontWeight.w800,
+            child: Form(
+              key: formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: MediaQuery.sizeOf(context).height * 0.12),
+                  Text(
+                    'Login',
+                    style: TextStyle(
+                      color: Color(0xff24252C),
+                      fontSize: 32,
+                      fontFamily: 'lato',
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
-                ),
-                SizedBox(height: 53),
-                CustomTextAndTextFormField(
-                  title: 'Email',
-                  hintText: 'Enter your email...',
-                  controller: email,
-                ),
-                SizedBox(height: 26),
-                CustomTextAndTextFormField(
-                  title: 'Password',
-                  hintText: 'Password...',
-                  suffixIcon: IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.visibility_outlined),
+                  SizedBox(height: 53),
+                  CustomTextAndTextFormField(
+                    title: 'Email',
+                    hintText: 'Enter your email...',
+                    controller: email,
+                    validator: (val) {
+                      return Validator.validateEmail(val);
+                    },
                   ),
-                  controller: password,
-                ),
-                SizedBox(height: 71),
-                CustomAuthButton(title: 'Login', onPressed: () {}),
-              ],
+                  SizedBox(height: 26),
+                  CustomTextAndTextFormField(
+                    title: 'Password',
+                    hintText: 'Password...',
+                    suffixIcon: IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.visibility_outlined),
+                    ),
+                    controller: password,
+                    validator: (val) {
+                      return Validator.validatePassword(val);
+                    },
+                  ),
+                  SizedBox(height: 71),
+                  CustomAuthButton(
+                    title: 'Login',
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        FirebaseAuth.login(
+                          email: email.text,
+                          password: password.text,
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -8,11 +8,13 @@ class CustomTextAndTextFormField extends StatelessWidget {
     required this.title,
     this.suffixIcon,
     required this.controller,
+    this.validator,
   });
   final String title;
   final String hintText;
   IconButton? suffixIcon;
   final TextEditingController controller;
+  String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,7 @@ class CustomTextAndTextFormField extends StatelessWidget {
         SizedBox(height: 5),
         TextFormField(
           controller: controller,
+          validator: validator,
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
